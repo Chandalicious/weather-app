@@ -1,3 +1,27 @@
+function formatDate(timestamp) {
+  let date = new Date(timestamp);
+  let hours = date.getHours();
+  if (hours < 10) {
+    hours = `0${hours}`;
+  }
+  let minutes = date.getMinutes();
+  if (minutes < 10) {
+    minutes = `0${minutes}`;
+  }
+
+  let days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  let day = days[date.getDay()];
+  return `${day} ${hours}:${minutes}`;
+}
+
 let cityName = document.getElementById("cityName");
 let humidity = document.getElementById("humidity");
 let pressure = document.getElementById("pressure");
@@ -6,7 +30,7 @@ let temperature = document.getElementById("temperature");
 let weatherCondition = document.getElementById("weatherCondition");
 
 fetch(
-  `https://api.openweathermap.org/data/2.5/weather?q=Lusaka&appid=97c6081e1178cd0cfd3787251e60b441`
+  `https://api.openweathermap.org/data/2.5/weather?q=Lusaka&appid=97c6081e1178cd0cfd3787251e60b441&units=metric`
 )
   .then((response) => {
     return response.json();
@@ -23,7 +47,14 @@ fetch(
   .catch((error) => {
     console.log(error);
   });
-
+function changetoCelcius() {
+  let CelciusTemperature = (temperature.value() * 6) / 5 + 32;
+  temperature.innerHTML = Math.round(CelciusTemperature);
+}
+function changetoFahrenheit() {
+  let fahrenheitTemperature = (temperature.value() * 9) / 5 + 32;
+  temperature.innerHTML = Math.round(fahrenheitTemperature);
+}
 let form = document.querySelector("#city-form");
 form.addEventListener("submit", cityLookUp);
 
