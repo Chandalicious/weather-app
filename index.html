@@ -20,9 +20,9 @@
         <div class="row">
           <div class="col-md-6">
             <p>Weather Forecast</p>
-            <p>Sunday 7<sup>th</sup> May, 2021, 12:41 AM</p>
+            <p id="dateFormat"></p>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-6">
             <form id="city-form">
               <input
                 type="text"
@@ -33,11 +33,9 @@
                 aria-describedby="emailHelp"
                 placeholder="Find a city..."
               />
-              <input type="submit" value="search" /> <br />
+              <input type="submit" class="btn btn-success" value="search" />
+              <br />
             </form>
-          </div>
-          <div class="col-md-3">
-            <button id="currentLocation">Current</button>
           </div>
         </div>
 
@@ -49,11 +47,18 @@
               <h1><span id="cityName"> </span></h1>
               <p id="weatherCondition"></p>
               <div class="big-temperature">
-                <span id="temperature">16</span>°<a
+                <img src="" alt="Clear" id="icon" class="float-left" />
+                <strong id="temperature"></strong>
+                <span class="units"
+                  ><a href="#" id="celsius-link" class="active">°C</a>
+                  |
+                  <a href="#" id="fahrenheit-link">°F</a></span
+                >
+                <!-- °<a
                   onclick="changetoCelcius()"
                   id="celsius"
                   >C</a
-                >|<a onclick="changetoFahrenheit()" id="fahrenheit">F</a>
+                >|<a onclick="changetoFahrenheit()" id="fahrenheit">F</a> -->
                 <!-- <sup onclick="celsius()"
                   >C|</sup
                 ><sup onclick="fahrenheit()">F</sup> -->

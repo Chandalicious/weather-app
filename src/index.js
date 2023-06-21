@@ -28,38 +28,37 @@ let pressure = document.getElementById("pressure");
 let wind = document.getElementById("wind");
 let temperature = document.getElementById("temperature");
 let weatherCondition = document.getElementById("weatherCondition");
+let dateFormat = document.getElementById("dateFormat");
+let tempFromApi = 0
+let iconElement = document.querySelector("#icon");
 
-fetch(
-  `https://api.openweathermap.org/data/2.5/weather?q=Lusaka&appid=97c6081e1178cd0cfd3787251e60b441&units=metric`
-)
-  .then((response) => {
-    return response.json();
-  })
-  .then((jsonData) => {
-    console.log(jsonData);
-    weatherCondition.innerHTML = jsonData.weather[0].description;
-    humidity.innerHTML = jsonData.main.humidity + "%";
-    wind.innerHTML = jsonData.wind.speed + "km/h";
-    cityName.innerHTML = jsonData.name;
-    pressure.innerHTML = jsonData.main.pressure + "Pa";
-    temperature.innerHTML = jsonData.main.temp;
-  })
-  .catch((error) => {
-    console.log(error);
-  });
+searchCity("Lusaka")
+
 function changetoCelcius() {
-  let CelciusTemperature = (temperature.value() * 6) / 5 + 32;
-  temperature.innerHTML = Math.round(CelciusTemperature);
+  celsiusLink.classList.add("active");
+  fahrenheitLink.classList.remove("active");
+  temperature.innerHTML = Math.round(tempFromApi);
 }
+
+
 function changetoFahrenheit() {
-  let fahrenheitTemperature = (temperature.value() * 9) / 5 + 32;
+  celsiusLink.classList.remove("active");
+  fahrenheitLink.classList.add("active");
+  let fahrenheitTemperature = (tempFromApi * 9) / 5 + 32;
   temperature.innerHTML = Math.round(fahrenheitTemperature);
 }
+
+
 let form = document.querySelector("#city-form");
 form.addEventListener("submit", cityLookUp);
 
-let locationButton = document.querySelector("#currentLocation");
-locationButton.addEventListener("click", handlePosition);
+let celsiusTemperature = null;
+
+let fahrenheitLink = document.querySelector("#fahrenheit-link");
+fahrenheitLink.addEventListener("click", changetoFahrenheit);
+
+let celsiusLink = document.querySelector("#celsius-link");
+celsiusLink.addEventListener("click", changetoCelcius);
 
 function handlePosition() {
   navigator.geolocation.getCurrentPosition(getCurrentLocation);
@@ -92,24 +91,37 @@ function cityLookUp(event) {
   event.preventDefault();
   let cityInput = document.querySelector("#searchCity");
 
-  let searchCity = cityInput.value; //document.getElementById("searchCity").value;
+  let search = cityInput.value; //document.getElementById("searchCity").value;
 
-  fetch(
-    `https://api.openweathermap.org/data/2.5/weather?q=${searchCity}&appid=97c6081e1178cd0cfd3787251e60b441`
-  )
-    .then((response) => {
-      return response.json();
-    })
-    .then((jsonData) => {
-      console.log(jsonData);
-      weatherCondition.innerHTML = jsonData.weather[0].description;
-      humidity.innerHTML = jsonData.main.humidity + "%";
-      wind.innerHTML = jsonData.wind.speed + "km/h";
-      cityName.innerHTML = jsonData.name;
-      pressure.innerHTML = jsonData.main.pressure + "Pa";
-      temperature.innerHTML = jsonData.main.temp;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  searchCity(search)
+
+}
+
+function searchCity(searchCity){
+    fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${searchCity}&appid=97c6081e1178cd0cfd3787251e60b441&units=metric`
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .then((jsonData) => {
+        console.log(jsonData);
+        weatherCondition.innerHTML = jsonData.weather[0].description;
+        humidity.innerHTML = jsonData.main.humidity + "%";
+        wind.innerHTML = jsonData.wind.speed + "km/h";
+        cityName.innerHTML = jsonData.name;
+        pressure.innerHTML = jsonData.main.pressure + "Pa";
+        temperature.innerHTML = Math.round(jsonData.main.temp);
+        tempFromApi = Math.round(jsonData.main.temp);
+        dateFormat.innerHTML = formatDate(jsonData.dt * 1000);
+          iconElement.setAttribute(
+    "src",
+    `http://openweathermap.org/img/wn/${jsonData.weather[0].icon}@2x.png`
+  );
+  iconElement.setAttribute("alt",jsonData.weather[0].description);
+
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 }
