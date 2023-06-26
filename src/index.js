@@ -97,6 +97,52 @@ function cityLookUp(event) {
 
 }
 
+
+function forecast(coords) {
+  fetch(
+    `https://api.openweathermap.org/data/2.5/onecall?lat=${coords.lat}&lon=${coords.lon}&appid=46fac47dd8b8fa26d1b6852218ad3dfe&units=metric`
+  )
+    .then((response) => {
+      return response.json();
+    })
+    .then((jsonData) => {
+      console.log(jsonData);
+      displayForecast(jsonData);
+    });
+}
+
+function displayForecast(response) {
+  let forecast = response.daily;
+  let forecastElement = document.querySelector("#forecast");
+
+  let forecastHTML = `<div class="row">`;
+
+  forecast.forEach(function (forecastDay, index) {
+    if (index < 6) {
+      forecastHTML =
+        forecastHTML +
+        `<div class="col-2">
+                <div class="weather-forecast-date">
+                ${formatDate(forecastDay.dt)}
+                </div>
+                <img src="http://openweathermap.org/img/wn/${
+                  forecastDay.weather[0].icon
+                }@2x.png" alt="" width="56" />
+                <div class="weather-forecast-temperature">
+                    <span class="weather-forecast-temperature-max"> ${Math.round(
+                      forecastDay.temp.max
+                    )}°   </span> 
+                    <span class="weather-forecast-temperature-min"> ${Math.round(
+                      forecastDay.temp.min
+                    )}° </span>
+                </div>
+            </div>`;
+    }
+  });
+  forecastHTML = forecastHTML + `</div>`;
+  forecastElement.innerHTML = forecastHTML;
+}
+
 function searchCity(searchCity){
     fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${searchCity}&appid=97c6081e1178cd0cfd3787251e60b441&units=metric`
@@ -106,11 +152,12 @@ function searchCity(searchCity){
       })
       .then((jsonData) => {
         console.log(jsonData);
+        forecast(jsonData.coord)
         weatherCondition.innerHTML = jsonData.weather[0].description;
         humidity.innerHTML = jsonData.main.humidity + "%";
         wind.innerHTML = jsonData.wind.speed + "km/h";
         cityName.innerHTML = jsonData.name;
-        pressure.innerHTML = jsonData.main.pressure + "Pa";
+        // pressure.innerHTML = jsonData.main.pressure + "Pa";
         temperature.innerHTML = Math.round(jsonData.main.temp);
         tempFromApi = Math.round(jsonData.main.temp);
         dateFormat.innerHTML = formatDate(jsonData.dt * 1000);
